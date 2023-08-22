@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 // middleware
@@ -29,16 +29,19 @@ async function run() {
     const reviewCollection = client.db("BistroBoss").collection("reviews");
     const cartCollection = client.db("BistroBoss").collection("carts");
 
+    // menu related api
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+
+    // reviews related api
     app.get("/reviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
       res.send(result);
     });
 
-    //cart collection api
+    //cart related api
     app.get("/carts", async (req, res) => {
       const email = req.query.email;
       if (!email) {
@@ -52,6 +55,13 @@ async function run() {
     app.post("/carts", async (req, res) => {
       const item = req.body;
       const result = await cartCollection.insertOne(item);
+      res.send(result);
+    });
+
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
       res.send(result);
     });
 
