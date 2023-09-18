@@ -51,6 +51,7 @@ async function run() {
     const menuCollection = client.db("BistroBoss").collection("menu");
     const reviewCollection = client.db("BistroBoss").collection("reviews");
     const cartCollection = client.db("BistroBoss").collection("carts");
+    const bookingCollection = client.db("BistroBoss").collection("bookings");
 
     app.post("/jwt", (req, res) => {
       const user = req.body;
@@ -214,6 +215,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Booking related api
+    app.post("/booking", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingCollection.insertOne(booking);
       res.send(result);
     });
 
