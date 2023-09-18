@@ -135,6 +135,37 @@ async function run() {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+    // get single item data
+    app.get("/menu/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: id };
+      console.log();
+      const result = await menuCollection.findOne(query, id);
+      res.send(result);
+    });
+    // update item data
+    app.put("/menu/:id", async (req, res) => {
+      const id = req.params.id;
+      const item = req.body;
+      const filter = { _id: id };
+      const options = { upsert: true };
+      const updatedItem = {
+        $set: {
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          recipe: item.recipe,
+          image: item.image,
+          deleteImage: item.deleteImage,
+        },
+      };
+      const result = await menuCollection.updateOne(
+        filter,
+        updatedItem,
+        options
+      );
+      res.send(result);
+    });
 
     app.post("/menu", verifyJWT, verifyAdmin, async (req, res) => {
       const newItem = req.body;
@@ -144,7 +175,7 @@ async function run() {
 
     app.delete("/menu/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
+      const query = { _id: id };
       const result = await menuCollection.deleteOne(query);
       res.send(result);
     });
