@@ -56,9 +56,9 @@ async function run() {
     app.post("/jwt", (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1d",
+        expiresIn: "1h",
       });
-      res.send({ token });
+      res.send(token);
     });
 
     // verify admin
@@ -199,7 +199,6 @@ async function run() {
           .status(401)
           .send({ error: true, message: "Forbidden Access" });
       }
-
       const query = { email: email };
       const result = await cartCollection.find(query).toArray();
       res.send(result);
@@ -222,6 +221,11 @@ async function run() {
     app.post("/booking", async (req, res) => {
       const booking = req.body;
       const result = await bookingCollection.insertOne(booking);
+      res.send(result);
+    });
+
+    app.get("/booking", async (req, res) => {
+      const result = await bookingCollection.find().toArray();
       res.send(result);
     });
 
