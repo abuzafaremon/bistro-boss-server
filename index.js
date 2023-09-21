@@ -224,7 +224,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/booking", async (req, res) => {
+    app.get("/booking", verifyJWT, async (req, res) => {
       const result = await bookingCollection.find().toArray();
       res.send(result);
     });
@@ -245,6 +245,12 @@ async function run() {
         updatedItem,
         options
       );
+      res.send(result);
+    });
+    app.delete("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await bookingCollection.deleteOne(filter);
       res.send(result);
     });
 
