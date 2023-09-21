@@ -229,6 +229,25 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const item = req.body;
+      console.log(id, item);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedItem = {
+        $set: {
+          status: item.status,
+        },
+      };
+      const result = await bookingCollection.updateOne(
+        filter,
+        updatedItem,
+        options
+      );
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
