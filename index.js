@@ -186,6 +186,11 @@ async function run() {
       const result = await reviewCollection.find().toArray();
       res.send(result);
     });
+    app.post("/reviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
 
     //cart related api
     app.get("/carts", verifyJWT, async (req, res) => {
