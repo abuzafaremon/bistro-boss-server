@@ -53,6 +53,7 @@ async function run() {
     const reviewCollection = client.db("BistroBoss").collection("reviews");
     const cartCollection = client.db("BistroBoss").collection("carts");
     const bookingCollection = client.db("BistroBoss").collection("bookings");
+    const paymentCollection = client.db("BistroBoss").collection("payments");
 
     app.post("/jwt", (req, res) => {
       const user = req.body;
@@ -271,6 +272,13 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    });
+
+    // Payment related api
+    app.post("/payments", async (req, res) => {
+      const payment = req.body;
+      const result = await paymentCollection.insertOne(payment);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
