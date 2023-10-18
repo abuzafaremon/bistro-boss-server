@@ -264,8 +264,9 @@ async function run() {
     // create payment intent
     app.post("/create-payment-intent", verifyJWT, async (req, res) => {
       const { price } = req.body;
+      const amount = price * 100;
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: price * 100,
+        amount: amount,
         currency: "usd",
         payment_method_types: ["card"],
       });
@@ -277,8 +278,14 @@ async function run() {
     // Payment related api
     app.post("/payments", async (req, res) => {
       const payment = req.body;
-      const result = await paymentCollection.insertOne(payment);
-      res.send(result);
+      const insertResult = await paymentCollection.insertOne(payment);
+
+      const deleteQuery = {
+        _id: { $in: payment.cartItems.map((id) => new ObjectId(id)) },
+      };
+      const deleteResult = await cartCollection.deleteMany(deleteQuery);
+
+      res.send({ insertResult, deleteResult });
     });
 
     // Send a ping to confirm a successful connection
